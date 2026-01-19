@@ -12,6 +12,8 @@ const Dashboard = () => {
   const chartContainerRef = useRef();
   
   const [symbol, setSymbol] = useState('BTCUSD');
+  const [selectedSymbol, setSelectedSymbol] = useState('BTC');
+  const [symbolType, setSymbolType] = useState('crypto');
   const [currentPrice, setCurrentPrice] = useState(null);
   const [isLive, setIsLive] = useState(false);
   const [aiSignal, setAiSignal] = useState(null);
@@ -26,6 +28,27 @@ const Dashboard = () => {
   const [challengeId, setChallengeId] = useState(null);
   const [activeChallenge, setActiveChallenge] = useState(null);
   const [showTradeHistory, setShowTradeHistory] = useState(false);
+
+  // Available symbols for trading
+  const AVAILABLE_SYMBOLS = [
+    { value: 'BTC', label: 'Bitcoin (BTC)', type: 'crypto', tvSymbol: 'BTCUSD' },
+    { value: 'ETH', label: 'Ethereum (ETH)', type: 'crypto', tvSymbol: 'ETHUSD' },
+    { value: 'IAM', label: 'Maroc Telecom (IAM)', type: 'bvc', tvSymbol: 'IAM' },
+    { value: 'ATW', label: 'Attijariwafa Bank (ATW)', type: 'bvc', tvSymbol: 'ATW' },
+    { value: 'LHM', label: 'LafargeHolcim (LHM)', type: 'bvc', tvSymbol: 'LHM' },
+    { value: 'SMI', label: 'SMI (SMI)', type: 'bvc', tvSymbol: 'SMI' }
+  ];
+
+  // Handle symbol change
+  const handleSymbolChange = (newSymbol) => {
+    const symbolInfo = AVAILABLE_SYMBOLS.find(s => s.value === newSymbol);
+    if (symbolInfo) {
+      setSelectedSymbol(newSymbol);
+      setSymbolType(symbolInfo.type);
+      setSymbol(symbolInfo.tvSymbol);
+      setCurrentPrice(null); // Reset price when changing symbols
+    }
+  };
 
   // Fetch user's active challenge on mount
   useEffect(() => {
@@ -174,8 +197,13 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchPrice = async () => {
       try {
-        const apiSymbol = symbol === 'BTCUSD' ? 'BTC' : symbol === 'ETHUSD' ? 'ETH' : symbol;
-        const response = await axios.get(`/api/crypto/${apiSymbol}`);
+        let response;
+        if (symbolType === 'crypto') {
+          response = await axios.get(`/api/crypto/${selectedSymbol}`);
+        } else if (symbolType === 'bvc') {
+          response = await axios.get(`/api/bvc/${selectedSymbol}`);
+        }
+        
         const data = response.data;
         const newPrice = data.price;
         
@@ -203,7 +231,7 @@ const Dashboard = () => {
     const interval = setInterval(fetchPrice, 2000);
 
     return () => clearInterval(interval);
-  }, [symbol, currentPrice]);
+  }, [selectedSymbol, symbolType, currentPrice]);
 
   // Get AI signal
   const getAISignal = async () => {
@@ -223,16 +251,14 @@ const Dashboard = () => {
         return;
       }
       
-      // Convert symbol to backend format (BTCUSD -> BTC, ETHUSD -> ETH)
-      const apiSymbol = symbol === 'BTCUSD' ? 'BTC' : symbol === 'ETHUSD' ? 'ETH' : symbol;
-      
+      // Use the selected symbol directly for AI signal
       console.log('Sending AI signal request with token:', authToken.substring(0, 20) + '...');
-      console.log('Symbol:', apiSymbol, 'Current Price:', currentPrice);
+      console.log('Symbol:', selectedSymbol, 'Current Price:', currentPrice);
       
       const response = await axios.post(
         '/api/ai/signal',
         {
-          symbol: apiSymbol,
+          symbol: selectedSymbol,
           current_price: currentPrice,
         },
         {
@@ -289,7 +315,7 @@ const Dashboard = () => {
     const trade = {
       id: Date.now(),
       type,
-      symbol,
+      symbol: selectedSymbol,
       entryPrice: currentPrice,
       quantity: 0.1,
       timestamp: new Date().toISOString(),
@@ -546,6 +572,38 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Main Chart Area */}
         <div className="lg:col-span-3 space-y-4">
+          {/* Symbol Selector */}
+          <div className="bg-[#1e222d] rounded-lg border border-[#2b2b43] p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <h3 className="text-sm font-bold text-white">Select Symbol:</h3>
+                <select 
+                  value={selectedSymbol} 
+                  onChange={(e) => handleSymbolChange(e.target.value)}
+                  className="px-4 py-2 bg-[#2a2e39] border border-[#434651] rounded-lg text-white font-semibold hover:bg-[#363a45] transition-colors duration-200 cursor-pointer"
+                >
+                  {AVAILABLE_SYMBOLS.map(sym => (
+                    <option key={sym.value} value={sym.value}>
+                      {sym.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-xs text-gray-400">Current Price</div>
+                  <div className="text-2xl font-bold text-white">
+                    {currentPrice ? `${currentPrice.toLocaleString()} DH` : '...'}
+                  </div>
+                </div>
+                <div className={`flex items-center gap-1 text-xs ${isLive ? 'text-[#26a69a]' : 'text-gray-500'}`}>
+                  <div className={`w-2 h-2 ${isLive ? 'bg-[#26a69a]' : 'bg-gray-600'} rounded-full`}></div>
+                  {isLive ? 'Live' : 'Idle'}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Chart Container - TradingView Widget */}
           <div className="bg-[#1e222d] rounded-lg overflow-hidden border border-[#2b2b43]" style={{ height: '600px' }}>
             <div id="tradingview_widget" ref={chartContainerRef} style={{ height: '100%', width: '100%' }} />
