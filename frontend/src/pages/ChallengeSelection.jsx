@@ -175,7 +175,7 @@ const ChallengeSelection = () => {
                   className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${
                     selecting === challenge.type
                       ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
-                      : 'bg-gradient-to-r ' + getChallengeGradient(challenge.type) + ' text-white hover:opacity-90'
+                      : `bg-gradient-to-r ${getChallengeGradient(challenge.type)} text-white hover:opacity-90`
                   }`}
                 >
                   {selecting === challenge.type ? (

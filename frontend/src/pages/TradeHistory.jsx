@@ -77,12 +77,15 @@ const TradeHistory = () => {
       filtered = filtered.filter(t => t.type === filters.type);
     }
 
-    // Filter by date range
-    if (filters.dateFrom) {
-      filtered = filtered.filter(t => new Date(t.timestamp) >= new Date(filters.dateFrom));
+    // Filter by date range - parse dates once for performance
+    const dateFrom = filters.dateFrom ? new Date(filters.dateFrom) : null;
+    const dateTo = filters.dateTo ? new Date(filters.dateTo) : null;
+    
+    if (dateFrom) {
+      filtered = filtered.filter(t => new Date(t.timestamp) >= dateFrom);
     }
-    if (filters.dateTo) {
-      filtered = filtered.filter(t => new Date(t.timestamp) <= new Date(filters.dateTo));
+    if (dateTo) {
+      filtered = filtered.filter(t => new Date(t.timestamp) <= dateTo);
     }
 
     setFilteredTrades(filtered);
@@ -110,8 +113,12 @@ const TradeHistory = () => {
     winningTrades: filteredTrades.filter(t => t.pnl > 0).length,
     losingTrades: filteredTrades.filter(t => t.pnl < 0).length,
     totalPnL: filteredTrades.reduce((sum, t) => sum + t.pnl, 0),
-    bestTrade: filteredTrades.length > 0 ? Math.max(...filteredTrades.map(t => t.pnl)) : 0,
-    worstTrade: filteredTrades.length > 0 ? Math.min(...filteredTrades.map(t => t.pnl)) : 0,
+    bestTrade: filteredTrades.length > 0 
+      ? filteredTrades.reduce((max, t) => t.pnl > max ? t.pnl : max, filteredTrades[0].pnl)
+      : 0,
+    worstTrade: filteredTrades.length > 0 
+      ? filteredTrades.reduce((min, t) => t.pnl < min ? t.pnl : min, filteredTrades[0].pnl)
+      : 0,
     winRate: filteredTrades.length > 0 
       ? (filteredTrades.filter(t => t.pnl > 0).length / filteredTrades.length * 100).toFixed(1)
       : 0
