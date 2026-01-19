@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^cd c:\\\\Users\\\\abdel\\\\Desktop\\\\propsens\\\\backend; python -m venv venv$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
