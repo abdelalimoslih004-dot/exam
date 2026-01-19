@@ -78,7 +78,7 @@ def health_check():
 
 @app.route('/api/register', methods=['POST'])
 def register():
-    """User registration endpoint"""
+    """User registration endpoint with automatic free challenge creation"""
     try:
         data = request.get_json()
         
@@ -115,15 +115,90 @@ def register():
         user.set_password(password)
         
         db.session.add(user)
+        db.session.flush()  # Get user.id before creating challenge
+        
+        # 🎁 AUTO-CREATE FREE CHALLENGE FOR TRADERS
+        challenge = None
+        if role == 'trader':
+            challenge = Challenge(
+                user_id=user.id,
+                type='Free Trial',
+                initial_balance=5000.0,
+                current_balance=5000.0,
+                status='active',
+                start_date=datetime.utcnow()
+            )
+            db.session.add(challenge)
+            db.session.flush()
+            
+            # Initialize daily snapshot for challenge killer
+            killer.daily_equity_snapshot[challenge.id] = challenge.initial_balance
+        
         db.session.commit()
         
         # Create access token
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         
         return jsonify({
             'message': 'User registered successfully',
             'access_token': access_token,
-            'user': user.to_dict()
+            'user': user.to_dict(),
+            'challenge': challenge.to_dict() if challenge else None
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"[REGISTER ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/challenges/create-free', methods=['POST'])
+@jwt_required()
+def create_free_challenge():
+    """
+    Create a FREE challenge for users who don't have an active one
+    Allows users to start trading without payment
+    """
+    try:
+        current_user_id = int(get_jwt_identity())
+        user = User.query.get(current_user_id)
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        # Check if user already has an active challenge
+        active_challenge = Challenge.query.filter_by(
+            user_id=user.id,
+            status='active'
+        ).first()
+        
+        if active_challenge:
+            return jsonify({
+                'error': 'You already have an active challenge',
+                'challenge': active_challenge.to_dict()
+            }), 400
+        
+        # Create new FREE challenge
+        challenge = Challenge(
+            user_id=user.id,
+            type='Free Trial',
+            initial_balance=5000.0,
+            current_balance=5000.0,
+            status='active',
+            start_date=datetime.utcnow()
+        )
+        
+        db.session.add(challenge)
+        db.session.commit()
+        
+        # Initialize snapshot for challenge killer
+        killer.daily_equity_snapshot[challenge.id] = challenge.initial_balance
+        
+        return jsonify({
+            'message': 'Free challenge created successfully!',
+            'challenge': challenge.to_dict()
         }), 201
         
     except Exception as e:
