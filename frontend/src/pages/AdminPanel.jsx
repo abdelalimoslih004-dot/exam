@@ -120,25 +120,25 @@ const AdminPanel = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => navigate('/dashboard')}
-                className="text-gray-600 hover:text-gray-900 transition-colors font-medium"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors font-medium"
               >
                 ← Back to Dashboard
               </button>
-              <h1 className="text-2xl font-bold text-blue-900">
+              <h1 className="text-2xl font-bold text-blue-900 dark:text-blue-200">
                 Admin Panel
               </h1>
             </div>
             <button
               onClick={fetchChallenges}
-              className="px-4 py-2 bg-blue-900 hover:bg-blue-800 rounded-lg transition-colors text-white font-semibold"
+              className="px-4 py-2 bg-blue-900 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-600 rounded-lg transition-colors text-white font-semibold"
             >
               Refresh
             </button>
@@ -152,7 +152,7 @@ const AdminPanel = () => {
                 placeholder="Search by username or challenge ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white transition-colors duration-300"
               />
             </div>
             <div className="flex gap-2">
