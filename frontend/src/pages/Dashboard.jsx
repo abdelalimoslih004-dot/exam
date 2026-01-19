@@ -202,25 +202,27 @@ const Dashboard = () => {
           response = await axios.get(`/api/crypto/${selectedSymbol}`);
         } else if (symbolType === 'bvc') {
           response = await axios.get(`/api/bvc/${selectedSymbol}`);
+        } else {
+          console.error('Unknown symbol type:', symbolType);
+          return;
         }
         
         const data = response.data;
         const newPrice = data.price;
         
         // Trigger live indicator animation
-        if (currentPrice !== null && newPrice !== currentPrice) {
-          setIsLive(true);
-          setTimeout(() => setIsLive(false), 1500);
-        }
-        
-        // Calculate price change
-        if (currentPrice !== null) {
-          const changeValue = newPrice - currentPrice;
-          const changePercent = ((changeValue / currentPrice) * 100);
-          setPriceChange({ value: changeValue, percent: changePercent });
-        }
-        
-        setCurrentPrice(newPrice);
+        setCurrentPrice((prevPrice) => {
+          if (prevPrice !== null && newPrice !== prevPrice) {
+            setIsLive(true);
+            setTimeout(() => setIsLive(false), 1500);
+            
+            // Calculate price change
+            const changeValue = newPrice - prevPrice;
+            const changePercent = ((changeValue / prevPrice) * 100);
+            setPriceChange({ value: changeValue, percent: changePercent });
+          }
+          return newPrice;
+        });
 
       } catch (error) {
         console.error('Error fetching price:', error);
@@ -231,7 +233,7 @@ const Dashboard = () => {
     const interval = setInterval(fetchPrice, 2000);
 
     return () => clearInterval(interval);
-  }, [selectedSymbol, symbolType, currentPrice]);
+  }, [selectedSymbol, symbolType]);
 
   // Get AI signal
   const getAISignal = async () => {
