@@ -14,7 +14,11 @@ import SuperAdminPanel from './pages/SuperAdminPanel';
 import Challenges from './pages/Challenges';
 import ChallengeSelection from './pages/ChallengeSelection';
 import TradeHistory from './pages/TradeHistory';
+import axios from 'axios';
 
+// 👇 C'est LA ligne qui connecte tout
+axios.defaults.baseURL = "https://exam-production-ce65.up.railway.app";
+axios.defaults.withCredentials = true;
 function App() {
   const { i18n } = useTranslation();
 

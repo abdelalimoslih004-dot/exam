@@ -26,7 +26,7 @@ const Challenges = () => {
           return;
         }
 
-        const res = await axios.get('/api/challenges', {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/challenges`, {
           headers: { Authorization: `Bearer ${authToken}` }
         });
         setChallenges(res.data.challenges || []);

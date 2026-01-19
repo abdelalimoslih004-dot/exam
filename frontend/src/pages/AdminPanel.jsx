@@ -30,7 +30,7 @@ const AdminPanel = () => {
   const fetchChallenges = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('/api/admin/challenges', {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/challenges`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

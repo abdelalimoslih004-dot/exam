@@ -26,7 +26,7 @@ const ChallengeSelection = () => {
         return;
       }
 
-      const response = await axios.get('/api/challenges/available', {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/challenges/available`, {
         headers: { Authorization: `Bearer ${authToken}` }
       });
 

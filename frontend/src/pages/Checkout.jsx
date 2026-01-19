@@ -97,7 +97,7 @@ const Checkout = () => {
   const handlePaymentSuccess = async (method, transactionId) => {
     try {
       // Login as admin to get token
-      const loginResponse = await axios.post('/api/login', {
+      const loginResponse = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/login`, {
         username: 'admin',
         password: 'admin123'
       });

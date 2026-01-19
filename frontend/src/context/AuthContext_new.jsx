@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post('/api/login', {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/login`, {
         username,
         password
       });
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, email, password, role = 'trader') => {
     try {
-      const response = await axios.post('/api/register', {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/register`, {
         username,
         email,
         password,

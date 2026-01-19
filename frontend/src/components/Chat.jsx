@@ -11,7 +11,7 @@ const Chat = ({ isOpen, onClose, username }) => {
   useEffect(() => {
     if (isOpen && !socketRef.current) {
       // Connect to SocketIO server
-      socketRef.current = io('http://localhost:5000', {
+      socketRef.current = io(import.meta.env.VITE_BACKEND_URL, {
         transports: ['websocket', 'polling']
       });
 

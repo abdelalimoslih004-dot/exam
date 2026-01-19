@@ -63,7 +63,7 @@ const Dashboard = () => {
         const authToken = token || localStorage.getItem('token');
         if (!authToken) return;
 
-        const response = await axios.get('/api/challenges', {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/challenges`, {
           headers: { Authorization: `Bearer ${authToken}` }
         });
 
@@ -96,7 +96,7 @@ const Dashboard = () => {
         const authToken = token || localStorage.getItem('token');
         if (!authToken) return;
 
-        const response = await axios.get('/api/trades', {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/trades`, {
           headers: { Authorization: `Bearer ${authToken}` }
         });
 
@@ -201,9 +201,9 @@ const Dashboard = () => {
       try {
         let response;
         if (symbolType === 'crypto') {
-          response = await axios.get(`/api/crypto/${selectedSymbol}`);
+          response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/crypto/${selectedSymbol}`);
         } else if (symbolType === 'bvc') {
-          response = await axios.get(`/api/bvc/${selectedSymbol}`);
+          response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/bvc/${selectedSymbol}`);
         } else {
           console.error('Unknown symbol type:', symbolType);
           return;
