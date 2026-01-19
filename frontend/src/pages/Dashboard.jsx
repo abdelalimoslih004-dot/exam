@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const [username, setUsername] = useState(user?.username || 'Trader');
   const [challengeId, setChallengeId] = useState(null);
+  const [activeChallenge, setActiveChallenge] = useState(null);
   const [showTradeHistory, setShowTradeHistory] = useState(false);
 
   // Fetch user's active challenge on mount
@@ -39,14 +40,16 @@ const Dashboard = () => {
 
         const challenges = response.data.challenges || [];
         console.log('All challenges:', challenges);
-        const activeChallenge = challenges.find(c => c.status === 'active');
+        const activeChallengeData = challenges.find(c => c.status === 'active');
         
-        if (activeChallenge) {
-          setChallengeId(activeChallenge.id);
-          setBalance(activeChallenge.current_balance);
-          console.log('✅ Active challenge loaded - ID:', activeChallenge.id, 'Balance:', activeChallenge.current_balance);
+        if (activeChallengeData) {
+          setChallengeId(activeChallengeData.id);
+          setBalance(activeChallengeData.current_balance);
+          setActiveChallenge(activeChallengeData);
+          console.log('✅ Active challenge loaded - ID:', activeChallengeData.id, 'Balance:', activeChallengeData.current_balance);
         } else {
           console.warn('⚠️ No active challenge found!');
+          setActiveChallenge(null);
           // Don't block UI with alert - just log to console
           console.log('💡 Tip: Go to Challenges page to start a new challenge');
         }
@@ -378,13 +381,30 @@ const Dashboard = () => {
         console.log('Balance updated from server:', response.data.challenge.current_balance);
       }
 
+      // Update active challenge data
+      if (response.data.challenge) {
+        setActiveChallenge(response.data.challenge);
+      }
+
       // Reload trade history to get the recorded trade
       if (challengeId) {
         const historyResponse = await axios.get('/api/trades', {
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
         if (historyResponse.data.trades) {
-          setTrades(historyResponse.data.trades.slice(0, 10));
+          // Transform backend trade format to frontend format
+          const formattedTrades = historyResponse.data.trades.map(t => ({
+            id: t.id,
+            type: t.type.toUpperCase(),
+            symbol: t.symbol,
+            entryPrice: t.entry_price || t.price,
+            exitPrice: t.exit_price || t.price,
+            quantity: t.quantity,
+            pnl: t.pnl,
+            closedAt: t.closed_at,
+            timestamp: t.opened_at
+          }));
+          setTrades(formattedTrades.slice(0, 10));
         }
       }
 
@@ -455,7 +475,7 @@ const Dashboard = () => {
           </button>
 
           <button
-            onClick={() => setShowTradeHistory(true)}
+            onClick={() => navigate('/trade-history')}
             className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-all duration-200"
           >
             Trade History
@@ -497,10 +517,28 @@ const Dashboard = () => {
           </button>
 
           <div className="bg-[#2a2e39] px-4 py-2 rounded border border-[#434651]">
-            <div className="text-xs text-gray-400">Balance</div>
-            <div className={`text-lg font-bold ${balance >= 5000 ? 'text-[#26a69a]' : 'text-[#ef5350]'}`}>
-              {balance.toFixed(2)} DH
-            </div>
+            {activeChallenge ? (
+              <>
+                <div className="text-xs text-gray-400">{activeChallenge.type} Challenge</div>
+                <div className={`text-lg font-bold ${balance >= activeChallenge.initial_balance ? 'text-[#26a69a]' : 'text-[#ef5350]'}`}>
+                  {balance.toFixed(2)} DH
+                </div>
+                <div className={`text-xs ${(balance - activeChallenge.initial_balance) >= 0 ? 'text-[#26a69a]' : 'text-[#ef5350]'}`}>
+                  {(balance - activeChallenge.initial_balance) >= 0 ? '+' : ''}
+                  {(balance - activeChallenge.initial_balance).toFixed(2)} DH
+                  ({((balance - activeChallenge.initial_balance) / activeChallenge.initial_balance * 100).toFixed(2)}%)
+                </div>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate('/challenge-selection')}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-all duration-200 text-sm"
+                >
+                  Select Challenge
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -588,12 +626,22 @@ const Dashboard = () => {
 
           {/* Recent Trades Panel */}
           <div className="bg-[#1e222d] rounded-lg border border-[#2b2b43] p-4">
-            <h3 className="text-lg font-bold mb-3 text-white">Recent Trades</h3>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-lg font-bold text-white">Recent Trades</h3>
+              {trades.length > 0 && (
+                <button
+                  onClick={() => navigate('/trade-history')}
+                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-200"
+                >
+                  View All →
+                </button>
+              )}
+            </div>
             <div className="space-y-2">
               {trades.length === 0 && (
                 <p className="text-gray-500 text-center py-6">No trades yet</p>
               )}
-              {trades.map(trade => (
+              {trades.slice(0, 5).map(trade => (
                 <div key={trade.id} className="bg-[#2a2e39] p-3 rounded space-y-1">
                   <div className="flex justify-between items-center">
                     <span className={`font-bold ${trade.type === 'BUY' ? 'text-[#26a69a]' : 'text-[#ef5350]'}`}>

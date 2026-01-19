@@ -74,6 +74,8 @@ class Challenge(db.Model):
             'daily_start_equity': self.daily_start_equity,
             'profit_loss': self.current_balance - self.initial_balance,
             'profit_loss_pct': ((self.current_balance - self.initial_balance) / self.initial_balance * 100) if self.initial_balance > 0 else 0,
+            'start_date': self.start_date.isoformat() if self.start_date else None,
+            'end_date': self.end_date.isoformat() if self.end_date else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
