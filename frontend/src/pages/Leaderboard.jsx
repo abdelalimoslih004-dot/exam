@@ -20,7 +20,7 @@ const Leaderboard = () => {
   const fetchLeaderboard = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/leaderboard');
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/leaderboard`);
       setLeaderboard(response.data.leaderboard);
       setError('');
     } catch (err) {
