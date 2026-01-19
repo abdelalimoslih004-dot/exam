@@ -65,6 +65,31 @@ bvc_scraper = BVCScraper()
 news_service = NewsService()
 killer.init_app(app)
 
+# Challenge Types Configuration
+CHALLENGE_TYPES = {
+    'Starter': {
+        'initial_balance': 5000.0,
+        'daily_loss_limit_pct': 5.0,
+        'total_loss_limit_pct': 10.0,
+        'profit_target_pct': 10.0,
+        'description': 'Perfect for beginners - Start with 5,000 DH'
+    },
+    'Pro': {
+        'initial_balance': 25000.0,
+        'daily_loss_limit_pct': 5.0,
+        'total_loss_limit_pct': 10.0,
+        'profit_target_pct': 10.0,
+        'description': 'For experienced traders - Start with 25,000 DH'
+    },
+    'Elite': {
+        'initial_balance': 100000.0,
+        'daily_loss_limit_pct': 5.0,
+        'total_loss_limit_pct': 10.0,
+        'profit_target_pct': 10.0,
+        'description': 'For professionals - Start with 100,000 DH'
+    }
+}
+
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -797,6 +822,106 @@ def get_user_trades():
         }), 200
         
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/challenges/available', methods=['GET'])
+@jwt_required()
+def get_available_challenges():
+    """Get list of available challenge types with details"""
+    try:
+        challenge_types = []
+        for type_name, config in CHALLENGE_TYPES.items():
+            challenge_types.append({
+                'type': type_name,
+                'initial_balance': config['initial_balance'],
+                'daily_loss_limit_pct': config['daily_loss_limit_pct'],
+                'total_loss_limit_pct': config['total_loss_limit_pct'],
+                'profit_target_pct': config['profit_target_pct'],
+                'description': config['description']
+            })
+        
+        return jsonify({
+            'challenge_types': challenge_types
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/challenges/select', methods=['POST'])
+@jwt_required()
+def select_challenge():
+    """Create a new challenge with selected type"""
+    try:
+        data = request.get_json()
+        current_user_id = int(get_jwt_identity())
+        
+        challenge_type = data.get('challenge_type')
+        
+        # Validate challenge type
+        if not challenge_type or challenge_type not in CHALLENGE_TYPES:
+            return jsonify({'error': 'Invalid challenge type. Must be Starter, Pro, or Elite'}), 400
+        
+        # Get challenge configuration
+        config = CHALLENGE_TYPES[challenge_type]
+        
+        # Create new challenge
+        challenge = Challenge(
+            user_id=current_user_id,
+            type=challenge_type,
+            initial_balance=config['initial_balance'],
+            current_balance=config['initial_balance'],
+            status='pending',  # Start as pending, needs to be started
+            daily_start_equity=None,
+            start_date=None
+        )
+        
+        db.session.add(challenge)
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'{challenge_type} challenge created successfully',
+            'challenge': challenge.to_dict()
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/challenges/<int:challenge_id>/start', methods=['POST'])
+@jwt_required()
+def start_challenge(challenge_id):
+    """Start a challenge - marks it as active"""
+    try:
+        current_user_id = int(get_jwt_identity())
+        
+        # Get the challenge
+        challenge = Challenge.query.filter_by(id=challenge_id, user_id=current_user_id).first()
+        
+        if not challenge:
+            return jsonify({'error': 'Challenge not found'}), 404
+        
+        if challenge.status == 'active':
+            return jsonify({'error': 'Challenge is already active'}), 400
+        
+        # Update challenge status to active
+        challenge.status = 'active'
+        challenge.start_date = datetime.utcnow()
+        challenge.daily_start_equity = challenge.current_balance
+        
+        db.session.commit()
+        
+        # Initialize killer's daily equity snapshot
+        killer.daily_equity_snapshot[challenge.id] = challenge.current_balance
+        
+        return jsonify({
+            'message': 'Challenge started successfully',
+            'challenge': challenge.to_dict()
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
 
