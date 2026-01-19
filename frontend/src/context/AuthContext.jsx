@@ -16,13 +16,6 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 👇 1. METS L'ADRESSE EXACTE DE TON BACKEND ICI ! (Sans le "/" à la fin)
-  // Exemple : "https://propsense-backend.vercel.app"
-  const API_URL = "https://propsense-backend-h7rtcfqod-abdelalimoslih004-dots-projects.vercel.app"; 
-
-  // 👇 2. ON FORCE AXIOS À TAPPER SUR LE BACKEND
-  axios.defaults.baseURL = API_URL;
-
   // Initialize auth state from localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -31,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     if (storedToken && storedUser) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
-      // Configure axios default header
+      // Configure axios default headerCD 
       axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
     }
     
@@ -40,9 +33,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      // 👇 J'ai enlevé '/api' car souvent sur Flask c'est juste '/login'
-      // Si ton backend utilise vraiment '/api/login', rajoute le '/api'
-      const response = await axios.post('/login', {
+      const response = await axios.post('/api/login', {
         username,
         password
       });
@@ -72,8 +63,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, email, password, role = 'trader') => {
     try {
-      // 👇 Pareil ici : '/register' au lieu de '/api/register'
-      const response = await axios.post('/register', {
+      const response = await axios.post('/api/register', {
         username,
         email,
         password,
@@ -104,9 +94,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Clear state
     setToken(null);
     setUser(null);
-    localStorage.clear(); // Nettoie tout d'un coup
+    
+    // Clear localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('challengeId');
+    localStorage.removeItem('paymentMethod');
+    localStorage.removeItem('transactionId');
+    
+    // Remove axios default header
     delete axios.defaults.headers.common['Authorization'];
   };
 
@@ -126,7 +125,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
