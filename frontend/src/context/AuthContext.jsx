@@ -16,6 +16,13 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 👇 1. METS L'ADRESSE EXACTE DE TON BACKEND ICI ! (Sans le "/" à la fin)
+  // Exemple : "https://propsense-backend.vercel.app"
+  const API_URL = "https://propsense-backend-h7rtcfqod-abdelalimoslih004-dots-projects.vercel.app"; 
+
+  // 👇 2. ON FORCE AXIOS À TAPPER SUR LE BACKEND
+  axios.defaults.baseURL = API_URL;
+
   // Initialize auth state from localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -33,7 +40,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post('/api/login', {
+      // 👇 J'ai enlevé '/api' car souvent sur Flask c'est juste '/login'
+      // Si ton backend utilise vraiment '/api/login', rajoute le '/api'
+      const response = await axios.post('/login', {
         username,
         password
       });
@@ -63,7 +72,8 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, email, password, role = 'trader') => {
     try {
-      const response = await axios.post('/api/register', {
+      // 👇 Pareil ici : '/register' au lieu de '/api/register'
+      const response = await axios.post('/register', {
         username,
         email,
         password,
@@ -94,18 +104,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    // Clear state
     setToken(null);
     setUser(null);
-    
-    // Clear localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('challengeId');
-    localStorage.removeItem('paymentMethod');
-    localStorage.removeItem('transactionId');
-    
-    // Remove axios default header
+    localStorage.clear(); // Nettoie tout d'un coup
     delete axios.defaults.headers.common['Authorization'];
   };
 
@@ -125,7 +126,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
