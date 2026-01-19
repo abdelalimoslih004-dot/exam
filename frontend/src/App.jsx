@@ -12,6 +12,8 @@ import Leaderboard from './pages/Leaderboard';
 import AdminPanel from './pages/AdminPanel';
 import SuperAdminPanel from './pages/SuperAdminPanel';
 import Challenges from './pages/Challenges';
+import ChallengeSelection from './pages/ChallengeSelection';
+import TradeHistory from './pages/TradeHistory';
 
 function App() {
   const { i18n } = useTranslation();
@@ -65,6 +67,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Challenges />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/challenge-selection"
+              element={
+                <ProtectedRoute>
+                  <ChallengeSelection />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/trade-history"
+              element={
+                <ProtectedRoute>
+                  <TradeHistory />
                 </ProtectedRoute>
               }
             />
