@@ -10,7 +10,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout, token, isAuthenticated } = useAuth();
   const chartContainerRef = useRef();
-  
+
   const [symbol, setSymbol] = useState('BTCUSD');
   const [selectedSymbol, setSelectedSymbol] = useState('BTC');
   const [symbolType, setSymbolType] = useState('crypto');
@@ -70,7 +70,7 @@ const Dashboard = () => {
         const challenges = response.data.challenges || [];
         console.log('All challenges:', challenges);
         const activeChallengeData = challenges.find(c => c.status === 'active');
-        
+
         if (activeChallengeData) {
           setChallengeId(activeChallengeData.id);
           setBalance(activeChallengeData.current_balance);
@@ -101,7 +101,7 @@ const Dashboard = () => {
         });
 
         const tradesData = response.data.trades || [];
-        
+
         const formattedTrades = tradesData.map(t => ({
           id: t.id,
           type: t.type.toUpperCase(),
@@ -208,19 +208,19 @@ const Dashboard = () => {
           console.error('Unknown symbol type:', symbolType);
           return;
         }
-        
+
         const data = response.data;
         const newPrice = data.price;
-        
+
         setCurrentPrice((prevPrice) => {
           if (prevPrice !== null && newPrice !== prevPrice) {
             setIsLive(true);
             setTimeout(() => setIsLive(false), 1500);
-            
+
             const changeValue = newPrice - prevPrice;
             const changePercent = ((changeValue / prevPrice) * 100);
             setPriceChange({ value: changeValue, percent: changePercent });
-            
+
             // Update market stats
             setMarketStats(prev => ({
               ...prev,
@@ -249,20 +249,20 @@ const Dashboard = () => {
     setLoading(true);
     try {
       let authToken = token || localStorage.getItem('token');
-      
+
       if (!authToken) {
         authToken = await loginDemo();
       }
-      
+
       if (!authToken) {
         alert('Authentication required. Please log in.');
         navigate('/login');
         return;
       }
-      
+
       console.log('Sending AI signal request with token:', authToken.substring(0, 20) + '...');
       console.log('Symbol:', selectedSymbol, 'Current Price:', currentPrice);
-      
+
       const response = await axios.post(
         '/api/ai/signal',
         {
@@ -270,7 +270,7 @@ const Dashboard = () => {
           current_price: currentPrice,
         },
         {
-          headers: { 
+          headers: {
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json'
           },
@@ -282,7 +282,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error getting AI signal:', error);
       console.error('Error response:', error.response?.data);
-      
+
       if (error.response?.status === 401) {
         alert('Session expired. Please log in again.');
         navigate('/login');
@@ -314,7 +314,7 @@ const Dashboard = () => {
   const executeTrade = async (type) => {
     console.log('executeTrade called with type:', type);
     console.log('currentPrice:', currentPrice, 'activeTrade:', activeTrade);
-    
+
     if (!currentPrice || activeTrade) {
       console.log('Trade blocked - currentPrice:', currentPrice, 'activeTrade:', activeTrade);
       return;
@@ -360,7 +360,7 @@ const Dashboard = () => {
 
     try {
       const authToken = token || localStorage.getItem('token');
-      
+
       if (!authToken) {
         console.warn('No auth token, trade only recorded locally');
         return;
@@ -371,7 +371,7 @@ const Dashboard = () => {
         console.log('💡 Trade will only be recorded locally. Start a challenge to persist trades.');
         return;
       }
-      
+
       console.log('Recording trade to backend:', {
         challenge_id: challengeId,
         symbol: activeTrade.symbol,
@@ -394,7 +394,7 @@ const Dashboard = () => {
         '/api/trades',
         tradeData,
         {
-          headers: { 
+          headers: {
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json'
           }
@@ -402,7 +402,7 @@ const Dashboard = () => {
       );
 
       console.log('Trade recorded successfully:', response.data);
-      
+
       if (response.data.challenge?.current_balance !== undefined) {
         setBalance(response.data.challenge.current_balance);
         console.log('Balance updated from server:', response.data.challenge.current_balance);
@@ -447,7 +447,7 @@ const Dashboard = () => {
   const executeNuke = async () => {
     try {
       const token = localStorage.getItem('token') || await loginDemo();
-      
+
       await axios.post(
         '/api/demo/nuke',
         {},
@@ -502,9 +502,9 @@ const Dashboard = () => {
                 <p className="text-xs text-gray-400">Professional Trading Platform</p>
               </div>
             </div>
-            
+
             <div className="flex space-x-1 bg-gray-900/60 rounded-xl p-1 border border-gray-700/50">
-              <button 
+              <button
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${selectedTab === 'trading' ? 'bg-gray-700 text-white shadow-inner' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`}
                 onClick={() => setSelectedTab('trading')}
               >
@@ -515,7 +515,7 @@ const Dashboard = () => {
                   <span>Trading</span>
                 </div>
               </button>
-              <button 
+              <button
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${selectedTab === 'challenges' ? 'bg-gray-700 text-white shadow-inner' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`}
                 onClick={() => navigate('/challenges')}
               >
@@ -526,7 +526,7 @@ const Dashboard = () => {
                   <span>Challenges</span>
                 </div>
               </button>
-              <button 
+              <button
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${selectedTab === 'history' ? 'bg-gray-700 text-white shadow-inner' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`}
                 onClick={() => setShowTradeHistory(true)}
               >
@@ -537,7 +537,7 @@ const Dashboard = () => {
                   <span>History</span>
                 </div>
               </button>
-              <button 
+              <button
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${selectedTab === 'leaderboard' ? 'bg-gray-700 text-white shadow-inner' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`}
                 onClick={() => navigate('/leaderboard')}
               >
@@ -636,17 +636,15 @@ const Dashboard = () => {
                   <button
                     key={sym.value}
                     onClick={() => handleSymbolChange(sym.value)}
-                    className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-[1.02] group ${
-                      selectedSymbol === sym.value
-                        ? 'bg-gradient-to-r from-blue-900/40 to-cyan-900/40 border border-blue-500/30 shadow-lg shadow-blue-500/10'
-                        : 'hover:bg-gray-700/50 border border-transparent hover:border-gray-600/50'
-                    }`}
+                    className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-[1.02] group ${selectedSymbol === sym.value
+                      ? 'bg-gradient-to-r from-blue-900/40 to-cyan-900/40 border border-blue-500/30 shadow-lg shadow-blue-500/10'
+                      : 'hover:bg-gray-700/50 border border-transparent hover:border-gray-600/50'
+                      }`}
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center space-x-3">
-                        <div className={`w-3 h-3 rounded-full ${
-                          sym.type === 'crypto' ? 'bg-purple-500' : 'bg-blue-500'
-                        }`}></div>
+                        <div className={`w-3 h-3 rounded-full ${sym.type === 'crypto' ? 'bg-purple-500' : 'bg-blue-500'
+                          }`}></div>
                         <div>
                           <div className="font-medium text-sm">{sym.value}</div>
                           <div className="text-xs text-gray-400">{sym.label.split('(')[0]}</div>
@@ -678,7 +676,7 @@ const Dashboard = () => {
                     <div className="text-xl font-bold text-white">{trades.length}</div>
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/30">
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-gray-400">Total P&L</span>
@@ -687,9 +685,8 @@ const Dashboard = () => {
                     </span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className={`h-2 rounded-full ${
-                      calculateTotalPnL() >= 0 ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-red-500 to-pink-500'
-                    }`} style={{ width: `${Math.min(100, Math.abs(calculateTotalPnL()) / 1000 * 100)}%` }}></div>
+                    <div className={`h-2 rounded-full ${calculateTotalPnL() >= 0 ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-red-500 to-pink-500'
+                      }`} style={{ width: `${Math.min(100, Math.abs(calculateTotalPnL()) / 1000 * 100)}%` }}></div>
                   </div>
                 </div>
 
@@ -712,7 +709,7 @@ const Dashboard = () => {
                   <h3 className="text-sm font-semibold text-cyan-300">ACTIVE CHALLENGE</h3>
                   <div className="text-xs text-cyan-400">● Live</div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div>
                     <div className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
@@ -720,7 +717,7 @@ const Dashboard = () => {
                     </div>
                     <div className="text-sm text-gray-300 mt-1">{activeChallenge.description || 'Trading Challenge'}</div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-gray-900/30 rounded-lg p-3">
                       <div className="text-xs text-gray-400">Target</div>
@@ -740,8 +737,8 @@ const Dashboard = () => {
                       </span>
                     </div>
                     <div className="w-full bg-gray-800 rounded-full h-2.5">
-                      <div className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 h-2.5 rounded-full transition-all duration-500" 
-                           style={{ width: `${Math.min(100, ((balance - activeChallenge.initial_balance) / activeChallenge.initial_balance * 100) + 50)}%` }}></div>
+                      <div className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 h-2.5 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(100, ((balance - activeChallenge.initial_balance) / activeChallenge.initial_balance * 100) + 50)}%` }}></div>
                     </div>
                   </div>
 
@@ -781,11 +778,10 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      isLive ? 'bg-green-900/30 text-green-400 border border-green-500/30' : 'bg-gray-700 text-gray-400'
-                    }`}>
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold ${isLive ? 'bg-green-900/30 text-green-400 border border-green-500/30' : 'bg-gray-700 text-gray-400'
+                      }`}>
                       <div className="flex items-center space-x-1">
                         <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}></div>
                         <span>{isLive ? 'LIVE' : 'IDLE'}</span>
@@ -803,12 +799,11 @@ const Dashboard = () => {
                       {currentPrice ? `${formatCurrency(currentPrice)} DH` : 'Loading...'}
                     </div>
                   </div>
-                  <div className={`text-lg font-bold px-4 py-2 rounded-lg ${
-                    priceChange.value >= 0 
-                      ? 'bg-green-900/30 text-green-400 border border-green-500/30' 
-                      : 'bg-red-900/30 text-red-400 border border-red-500/30'
-                  }`}>
-                    {priceChange.value >= 0 ? '↗' : '↘'} {priceChange.value >= 0 ? '+' : ''}{priceChange.value.toFixed(2)} 
+                  <div className={`text-lg font-bold px-4 py-2 rounded-lg ${priceChange.value >= 0
+                    ? 'bg-green-900/30 text-green-400 border border-green-500/30'
+                    : 'bg-red-900/30 text-red-400 border border-red-500/30'
+                    }`}>
+                    {priceChange.value >= 0 ? '↗' : '↘'} {priceChange.value >= 0 ? '+' : ''}{priceChange.value.toFixed(2)}
                     <span className="text-sm ml-1">({priceChange.percent.toFixed(2)}%)</span>
                   </div>
                 </div>
@@ -848,25 +843,69 @@ const Dashboard = () => {
             <div className="grid grid-cols-2 gap-4">
               {!activeTrade ? (
                 <>
+                  {/* BUY Button - Enhanced Premium Design */}
                   <button
                     onClick={() => executeTrade('BUY')}
-                    className="bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 hover:from-emerald-700 hover:via-green-700 hover:to-emerald-800 p-6 rounded-2xl font-bold text-white transition-all duration-300 shadow-xl hover:shadow-green-500/20 hover:scale-[1.02] transform"
+                    className="group relative bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 hover:from-emerald-400 hover:via-green-400 hover:to-teal-500 p-8 rounded-3xl font-bold text-white transition-all duration-500 shadow-2xl hover:shadow-emerald-500/40 hover:scale-[1.05] transform overflow-hidden border-2 border-emerald-400/20 hover:border-emerald-300/40"
                   >
-                    <div className="text-center">
-                      <div className="text-3xl mb-2">BUY / LONG</div>
-                      <div className="text-sm opacity-90">Enter Bullish Position</div>
-                      <div className="text-xs opacity-70 mt-2">Profit when price rises</div>
+                    {/* Animated Background Shine */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+
+                    {/* Pulse Effect on Hover */}
+                    <div className="absolute inset-0 bg-emerald-400/0 group-hover:bg-emerald-400/10 group-hover:animate-pulse rounded-3xl"></div>
+
+                    <div className="relative text-center z-10">
+                      {/* Icon */}
+                      <div className="flex justify-center mb-3">
+                        <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Text */}
+                      <div className="text-4xl mb-2 font-extrabold tracking-tight drop-shadow-lg">BUY / LONG</div>
+                      <div className="text-base opacity-95 font-semibold">Enter Bullish Position</div>
+                      <div className="text-sm opacity-80 mt-3 flex items-center justify-center space-x-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Profit when price rises ↗</span>
+                      </div>
                     </div>
                   </button>
-                  
+
+                  {/* SELL Button - Enhanced Premium Design */}
                   <button
                     onClick={() => executeTrade('SELL')}
-                    className="bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 hover:from-rose-700 hover:via-red-700 hover:to-rose-800 p-6 rounded-2xl font-bold text-white transition-all duration-300 shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] transform"
+                    className="group relative bg-gradient-to-br from-rose-500 via-red-500 to-pink-600 hover:from-rose-400 hover:via-red-400 hover:to-pink-500 p-8 rounded-3xl font-bold text-white transition-all duration-500 shadow-2xl hover:shadow-rose-500/40 hover:scale-[1.05] transform overflow-hidden border-2 border-rose-400/20 hover:border-rose-300/40"
                   >
-                    <div className="text-center">
-                      <div className="text-3xl mb-2">SELL / SHORT</div>
-                      <div className="text-sm opacity-90">Enter Bearish Position</div>
-                      <div className="text-xs opacity-70 mt-2">Profit when price falls</div>
+                    {/* Animated Background Shine */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+
+                    {/* Pulse Effect on Hover */}
+                    <div className="absolute inset-0 bg-rose-400/0 group-hover:bg-rose-400/10 group-hover:animate-pulse rounded-3xl"></div>
+
+                    <div className="relative text-center z-10">
+                      {/* Icon */}
+                      <div className="flex justify-center mb-3">
+                        <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Text */}
+                      <div className="text-4xl mb-2 font-extrabold tracking-tight drop-shadow-lg">SELL / SHORT</div>
+                      <div className="text-base opacity-95 font-semibold">Enter Bearish Position</div>
+                      <div className="text-sm opacity-80 mt-3 flex items-center justify-center space-x-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Profit when price falls ↘</span>
+                      </div>
                     </div>
                   </button>
                 </>
@@ -876,11 +915,10 @@ const Dashboard = () => {
                     <div>
                       <div className="text-sm text-gray-400 mb-2">Active Position</div>
                       <div className="flex items-center space-x-4">
-                        <div className={`px-6 py-3 rounded-xl font-bold text-lg ${
-                          activeTrade.type === 'BUY' 
-                            ? 'bg-gradient-to-r from-emerald-900/40 to-green-900/40 text-emerald-400 border border-emerald-500/30' 
-                            : 'bg-gradient-to-r from-rose-900/40 to-red-900/40 text-rose-400 border border-rose-500/30'
-                        }`}>
+                        <div className={`px-6 py-3 rounded-xl font-bold text-lg ${activeTrade.type === 'BUY'
+                          ? 'bg-gradient-to-r from-emerald-900/40 to-green-900/40 text-emerald-400 border border-emerald-500/30'
+                          : 'bg-gradient-to-r from-rose-900/40 to-red-900/40 text-rose-400 border border-rose-500/30'
+                          }`}>
                           {activeTrade.type}
                         </div>
                         <div>
@@ -889,14 +927,13 @@ const Dashboard = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="text-right">
                       <div className="text-sm text-gray-400 mb-2">Unrealized P&L</div>
-                      <div className={`text-3xl font-bold ${
-                        activeTrade.type === 'BUY' 
-                          ? (currentPrice > activeTrade.entryPrice ? 'text-emerald-400' : 'text-rose-400')
-                          : (currentPrice < activeTrade.entryPrice ? 'text-emerald-400' : 'text-rose-400')
-                      }`}>
+                      <div className={`text-3xl font-bold ${activeTrade.type === 'BUY'
+                        ? (currentPrice > activeTrade.entryPrice ? 'text-emerald-400' : 'text-rose-400')
+                        : (currentPrice < activeTrade.entryPrice ? 'text-emerald-400' : 'text-rose-400')
+                        }`}>
                         {activeTrade.type === 'BUY'
                           ? ((currentPrice - activeTrade.entryPrice) * activeTrade.quantity).toFixed(2)
                           : ((activeTrade.entryPrice - currentPrice) * activeTrade.quantity).toFixed(2)
@@ -904,7 +941,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-4 gap-4 mb-6">
                     <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/30">
                       <div className="text-sm text-gray-400 mb-1">Entry Price</div>
@@ -916,9 +953,8 @@ const Dashboard = () => {
                     </div>
                     <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/30">
                       <div className="text-sm text-gray-400 mb-1">Price Change</div>
-                      <div className={`text-lg font-bold ${
-                        currentPrice > activeTrade.entryPrice ? 'text-emerald-400' : 'text-rose-400'
-                      }`}>
+                      <div className={`text-lg font-bold ${currentPrice > activeTrade.entryPrice ? 'text-emerald-400' : 'text-rose-400'
+                        }`}>
                         {((currentPrice - activeTrade.entryPrice) / activeTrade.entryPrice * 100).toFixed(2)}%
                       </div>
                     </div>
@@ -929,7 +965,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={() => setActiveTrade(null)}
@@ -956,13 +992,13 @@ const Dashboard = () => {
                   <p className="text-sm text-gray-400 mt-1">Your latest trading activity</p>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <button 
+                  <button
                     onClick={() => setShowTradeHistory(true)}
                     className="px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 rounded-lg text-sm font-medium transition-all duration-300 border border-gray-600 hover:border-gray-500"
                   >
                     View All History
                   </button>
-                  <button 
+                  <button
                     onClick={() => navigate('/trade-history')}
                     className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-cyan-500/20"
                   >
@@ -970,7 +1006,7 @@ const Dashboard = () => {
                   </button>
                 </div>
               </div>
-              
+
               {trades.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="w-20 h-20 mx-auto mb-4 text-gray-600">
@@ -1000,11 +1036,10 @@ const Dashboard = () => {
                         {trades.slice(0, 5).map((trade, index) => (
                           <tr key={trade.id || index} className="hover:bg-gray-800/30 transition-colors duration-200">
                             <td className="py-4 px-6">
-                              <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
-                                trade.type === 'BUY' 
-                                  ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-500/30' 
-                                  : 'bg-rose-900/30 text-rose-400 border border-rose-500/30'
-                              }`}>
+                              <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${trade.type === 'BUY'
+                                ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-500/30'
+                                : 'bg-rose-900/30 text-rose-400 border border-rose-500/30'
+                                }`}>
                                 {trade.type}
                               </div>
                             </td>
@@ -1021,9 +1056,8 @@ const Dashboard = () => {
                               <div className="font-mono">{trade.quantity.toFixed(4)}</div>
                             </td>
                             <td className="py-4 px-6">
-                              <div className={`font-bold ${
-                                trade.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'
-                              }`}>
+                              <div className={`font-bold ${trade.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                                }`}>
                                 {trade.pnl >= 0 ? '+' : ''}{trade.pnl?.toFixed(2)} DH
                               </div>
                             </td>
@@ -1084,22 +1118,20 @@ const Dashboard = () => {
               {aiSignal ? (
                 <div className="space-y-6">
                   {/* Signal Display */}
-                  <div className={`p-6 rounded-xl border-2 ${
-                    aiSignal.signal === 'BUY' ? 'border-emerald-500 bg-gradient-to-r from-emerald-900/20 to-green-900/20' :
+                  <div className={`p-6 rounded-xl border-2 ${aiSignal.signal === 'BUY' ? 'border-emerald-500 bg-gradient-to-r from-emerald-900/20 to-green-900/20' :
                     aiSignal.signal === 'SELL' ? 'border-rose-500 bg-gradient-to-r from-rose-900/20 to-red-900/20' :
-                    'border-yellow-500 bg-gradient-to-r from-yellow-900/20 to-amber-900/20'
-                  }`}>
+                      'border-yellow-500 bg-gradient-to-r from-yellow-900/20 to-amber-900/20'
+                    }`}>
                     <div className="text-center mb-4">
-                      <div className={`text-4xl font-bold mb-2 ${
-                        aiSignal.signal === 'BUY' ? 'text-emerald-400' :
+                      <div className={`text-4xl font-bold mb-2 ${aiSignal.signal === 'BUY' ? 'text-emerald-400' :
                         aiSignal.signal === 'SELL' ? 'text-rose-400' :
-                        'text-yellow-400'
-                      }`}>
+                          'text-yellow-400'
+                        }`}>
                         {aiSignal.signal}
                       </div>
                       <div className="text-sm text-gray-300">AI Trading Recommendation</div>
                     </div>
-                    
+
                     <div className="mb-4">
                       <div className="flex justify-between text-sm mb-2">
                         <span className="text-gray-400">Confidence Level</span>
@@ -1107,11 +1139,10 @@ const Dashboard = () => {
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-3">
                         <div
-                          className={`h-3 rounded-full ${
-                            aiSignal.signal === 'BUY' ? 'bg-gradient-to-r from-emerald-500 to-green-500' :
+                          className={`h-3 rounded-full ${aiSignal.signal === 'BUY' ? 'bg-gradient-to-r from-emerald-500 to-green-500' :
                             aiSignal.signal === 'SELL' ? 'bg-gradient-to-r from-rose-500 to-red-500' :
-                            'bg-gradient-to-r from-yellow-500 to-amber-500'
-                          }`}
+                              'bg-gradient-to-r from-yellow-500 to-amber-500'
+                            }`}
                           style={{ width: `${aiSignal.confidence}%` }}
                         ></div>
                       </div>
@@ -1170,7 +1201,7 @@ const Dashboard = () => {
                 </svg>
                 Market Status
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="flex justify-between items-center py-3 border-b border-gray-700/50">
                   <span className="text-sm text-gray-400">Connection Status</span>
@@ -1244,7 +1275,7 @@ const Dashboard = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
-                
+
                 <button
                   onClick={() => navigate('/leaderboard')}
                   className="w-full bg-gradient-to-r from-purple-900/30 to-pink-900/30 hover:from-purple-900/40 hover:to-pink-900/40 rounded-xl p-4 text-sm font-medium transition-all duration-300 text-left flex items-center justify-between border border-purple-500/20 hover:border-purple-500/30"
@@ -1264,7 +1295,7 @@ const Dashboard = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
-                
+
                 {/* Hidden Nuke Feature */}
                 <div className="pt-4 border-t border-gray-700/50">
                   <button
@@ -1315,7 +1346,7 @@ const Dashboard = () => {
                   Trade History
                 </h2>
                 <p className="text-sm text-gray-400 mt-2">
-                  Total Trades: {trades.length} | Win Rate: {calculateWinRate()}% | Total P&L: 
+                  Total Trades: {trades.length} | Win Rate: {calculateWinRate()}% | Total P&L:
                   <span className={`ml-1 ${calculateTotalPnL() >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {calculateTotalPnL() >= 0 ? '+' : ''}{formatCurrency(calculateTotalPnL())} DH
                   </span>
@@ -1323,7 +1354,7 @@ const Dashboard = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <button
-                  onClick={() => {/* Export functionality */}}
+                  onClick={() => {/* Export functionality */ }}
                   className="px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 rounded-lg text-sm font-medium transition-all duration-300 border border-gray-600 hover:border-gray-500"
                 >
                   Export CSV
@@ -1379,11 +1410,10 @@ const Dashboard = () => {
                               <div className="text-sm text-gray-400 font-mono">#{trade.id.toString().slice(-6)}</div>
                             </td>
                             <td className="py-4 px-6">
-                              <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
-                                trade.type === 'BUY' 
-                                  ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-500/30' 
-                                  : 'bg-rose-900/30 text-rose-400 border border-rose-500/30'
-                              }`}>
+                              <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${trade.type === 'BUY'
+                                ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-500/30'
+                                : 'bg-rose-900/30 text-rose-400 border border-rose-500/30'
+                                }`}>
                                 {trade.type}
                               </div>
                             </td>
@@ -1400,9 +1430,8 @@ const Dashboard = () => {
                               <div className="font-mono">{trade.quantity.toFixed(4)}</div>
                             </td>
                             <td className="py-4 px-6">
-                              <div className={`font-bold ${
-                                trade.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'
-                              }`}>
+                              <div className={`font-bold ${trade.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                                }`}>
                                 {trade.pnl >= 0 ? '+' : ''}{trade.pnl?.toFixed(2)} DH
                               </div>
                             </td>
@@ -1428,7 +1457,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <button
-                    onClick={() => {/* Previous page */}}
+                    onClick={() => {/* Previous page */ }}
                     className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium transition-all duration-300 disabled:opacity-50"
                     disabled={true}
                   >
@@ -1436,7 +1465,7 @@ const Dashboard = () => {
                   </button>
                   <span className="text-sm text-gray-300">Page 1 of 1</span>
                   <button
-                    onClick={() => {/* Next page */}}
+                    onClick={() => {/* Next page */ }}
                     className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium transition-all duration-300 disabled:opacity-50"
                     disabled={true}
                   >
@@ -1454,6 +1483,18 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Inline Styles for Button Animations */}
+      <style>{`
+        @keyframes shimmer {
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+      `}</style>
     </div>
   );
 };
