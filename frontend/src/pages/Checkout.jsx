@@ -7,15 +7,26 @@ const Checkout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('paypal');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Get plan from navigation state
-    const plan = location.state?.plan;
+    // Get plan from navigation state or localStorage
+    let plan = location.state?.plan;
+
+    if (!plan) {
+      // Try to get from localStorage (after registration)
+      const storedPlan = localStorage.getItem('selectedPlan');
+      if (storedPlan) {
+        plan = JSON.parse(storedPlan);
+        // Clear it after use
+        localStorage.removeItem('selectedPlan');
+      }
+    }
+
     if (!plan) {
       navigate('/');
       return;
@@ -125,8 +136,8 @@ const Checkout = () => {
 
       // Show success message and redirect
       setTimeout(() => {
-        navigate('/dashboard', { 
-          state: { 
+        navigate('/dashboard', {
+          state: {
             newChallenge: buyResponse.data.challenge,
             paymentMethod: method,
             transactionId: transactionId
@@ -170,7 +181,7 @@ const Checkout = () => {
           {/* Order Summary */}
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700 h-fit">
             <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
-            
+
             <div className={`bg-gradient-to-r ${selectedPlan.gradient} p-6 rounded-xl mb-6`}>
               <h3 className="text-2xl font-bold mb-2">{selectedPlan.name}</h3>
               <div className="text-4xl font-bold mb-4">{selectedPlan.price} {selectedPlan.currency}</div>
@@ -227,11 +238,10 @@ const Checkout = () => {
                   <div className="space-y-4 mb-6">
                     <button
                       onClick={() => setPaymentMethod('paypal')}
-                      className={`w-full p-4 rounded-xl border-2 transition-all ${
-                        paymentMethod === 'paypal'
+                      className={`w-full p-4 rounded-xl border-2 transition-all ${paymentMethod === 'paypal'
                           ? 'border-blue-500 bg-blue-900/30'
                           : 'border-gray-700 hover:border-gray-600'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-900/60 rounded-lg flex items-center justify-center">
@@ -248,11 +258,10 @@ const Checkout = () => {
 
                     <button
                       onClick={() => setPaymentMethod('cmi')}
-                      className={`w-full p-4 rounded-xl border-2 transition-all ${
-                        paymentMethod === 'cmi'
+                      className={`w-full p-4 rounded-xl border-2 transition-all ${paymentMethod === 'cmi'
                           ? 'border-green-500 bg-green-900/30'
                           : 'border-gray-700 hover:border-gray-600'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-900/60 rounded-lg flex items-center justify-center">
@@ -269,11 +278,10 @@ const Checkout = () => {
 
                     <button
                       onClick={() => setPaymentMethod('crypto')}
-                      className={`w-full p-4 rounded-xl border-2 transition-all ${
-                        paymentMethod === 'crypto'
+                      className={`w-full p-4 rounded-xl border-2 transition-all ${paymentMethod === 'crypto'
                           ? 'border-purple-500 bg-purple-900/30'
                           : 'border-gray-700 hover:border-gray-600'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-900/60 rounded-lg flex items-center justify-center">

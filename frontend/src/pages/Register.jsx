@@ -87,7 +87,13 @@ const Register = () => {
     const result = await register(formData.username, formData.email, formData.password, 'trader');
 
     if (result.success) {
-      navigate('/dashboard');
+      // Check if user came from plan selection
+      const selectedPlan = localStorage.getItem('selectedPlan');
+      if (selectedPlan) {
+        navigate('/checkout');
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       setError(result.error);
       setLoading(false);
@@ -234,8 +240,8 @@ const Register = () => {
               type="submit"
               disabled={loading}
               className={`relative md:col-span-2 py-4 rounded-2xl font-black text-white uppercase tracking-widest transition-all duration-300 mt-2 overflow-hidden group ${loading
-                  ? 'bg-slate-700 cursor-wait'
-                  : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-xl shadow-blue-600/20 hover:shadow-blue-500/40 active:scale-95'
+                ? 'bg-slate-700 cursor-wait'
+                : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-xl shadow-blue-600/20 hover:shadow-blue-500/40 active:scale-95'
                 }`}
             >
               <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
