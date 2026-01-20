@@ -16,9 +16,9 @@ import ChallengeSelection from './pages/ChallengeSelection';
 import TradeHistory from './pages/TradeHistory';
 import axios from 'axios';
 
-// 👇 C'est LA ligne qui connecte tout
-axios.defaults.baseURL = "https://exam-production-ce65.up.railway.app";
-axios.defaults.withCredentials = true;
+// 👇 Use environment variable for backend URL
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+axios.defaults.withCredentials = false;
 function App() {
   const { i18n } = useTranslation();
 
