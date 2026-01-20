@@ -846,7 +846,7 @@ const Dashboard = () => {
                   {/* BUY Button - Enhanced Premium Design */}
                   <button
                     onClick={() => executeTrade('BUY')}
-                    className="group relative bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 hover:from-emerald-400 hover:via-green-400 hover:to-teal-500 p-8 rounded-3xl font-bold text-white transition-all duration-500 shadow-2xl hover:shadow-emerald-500/40 hover:scale-[1.05] transform overflow-hidden border-2 border-emerald-400/20 hover:border-emerald-300/40"
+                    className="group relative bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 hover:from-emerald-400 hover:via-green-400 hover:to-teal-500 p-5 rounded-2xl font-bold text-white transition-all duration-500 shadow-xl hover:shadow-emerald-500/30 hover:scale-[1.02] transform overflow-hidden border border-emerald-400/20 hover:border-emerald-300/40"
                   >
                     {/* Animated Background Shine */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
@@ -856,22 +856,18 @@ const Dashboard = () => {
 
                     <div className="relative text-center z-10">
                       {/* Icon */}
-                      <div className="flex justify-center mb-3">
-                        <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                      <div className="flex justify-center mb-2">
+                        <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/25 transition-all duration-300">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                           </svg>
                         </div>
                       </div>
 
                       {/* Text */}
-                      <div className="text-4xl mb-2 font-extrabold tracking-tight drop-shadow-lg">BUY / LONG</div>
-                      <div className="text-base opacity-95 font-semibold">Enter Bullish Position</div>
-                      <div className="text-sm opacity-80 mt-3 flex items-center justify-center space-x-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>Profit when price rises ↗</span>
+                      <div className="text-xl mb-1 font-bold tracking-tight">BUY / LONG</div>
+                      <div className="text-sm opacity-90 font-medium">Enter Bullish Position</div>
+                      <div className="text-xs opacity-75 mt-2">Profit when price rises ↗
                       </div>
                     </div>
                   </button>
@@ -879,32 +875,27 @@ const Dashboard = () => {
                   {/* SELL Button - Enhanced Premium Design */}
                   <button
                     onClick={() => executeTrade('SELL')}
-                    className="group relative bg-gradient-to-br from-rose-500 via-red-500 to-pink-600 hover:from-rose-400 hover:via-red-400 hover:to-pink-500 p-8 rounded-3xl font-bold text-white transition-all duration-500 shadow-2xl hover:shadow-rose-500/40 hover:scale-[1.05] transform overflow-hidden border-2 border-rose-400/20 hover:border-rose-300/40"
+                    className="group relative bg-gradient-to-br from-rose-500 via-red-500 to-pink-600 hover:from-rose-400 hover:via-red-400 hover:to-pink-500 p-5 rounded-2xl font-bold text-white transition-all duration-500 shadow-xl hover:shadow-rose-500/30 hover:scale-[1.02] transform overflow-hidden border border-rose-400/20 hover:border-rose-300/40"
                   >
                     {/* Animated Background Shine */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
 
-                    {/* Pulse Effect on Hover */}
-                    <div className="absolute inset-0 bg-rose-400/0 group-hover:bg-rose-400/10 group-hover:animate-pulse rounded-3xl"></div>
+
 
                     <div className="relative text-center z-10">
                       {/* Icon */}
-                      <div className="flex justify-center mb-3">
-                        <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
+                      <div className="flex justify-center mb-2">
+                        <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/25 transition-all duration-300">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
                           </svg>
                         </div>
                       </div>
 
                       {/* Text */}
-                      <div className="text-4xl mb-2 font-extrabold tracking-tight drop-shadow-lg">SELL / SHORT</div>
-                      <div className="text-base opacity-95 font-semibold">Enter Bearish Position</div>
-                      <div className="text-sm opacity-80 mt-3 flex items-center justify-center space-x-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>Profit when price falls ↘</span>
+                      <div className="text-xl mb-1 font-bold tracking-tight">SELL / SHORT</div>
+                      <div className="text-sm opacity-90 font-medium">Enter Bearish Position</div>
+                      <div className="text-xs opacity-75 mt-2">Profit when price falls ↘
                       </div>
                     </div>
                   </button>
