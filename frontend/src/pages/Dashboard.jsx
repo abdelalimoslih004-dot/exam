@@ -843,60 +843,39 @@ const Dashboard = () => {
             <div className="grid grid-cols-2 gap-4">
               {!activeTrade ? (
                 <>
-                  {/* BUY Button - Enhanced Premium Design */}
+                  {/* BUY Button - Compact Elite Design */}
                   <button
                     onClick={() => executeTrade('BUY')}
-                    className="group relative bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 hover:from-emerald-400 hover:via-green-400 hover:to-teal-500 p-5 rounded-2xl font-bold text-white transition-all duration-500 shadow-xl hover:shadow-emerald-500/30 hover:scale-[1.02] transform overflow-hidden border border-emerald-400/20 hover:border-emerald-300/40"
+                    className="group relative bg-gradient-to-br from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 px-6 py-3 rounded-xl font-bold text-white transition-all duration-300 shadow-lg hover:shadow-emerald-500/40 hover:-translate-y-0.5 transform overflow-hidden border border-emerald-400/30"
                   >
-                    {/* Animated Background Shine */}
+                    {/* Shimmer effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
 
-                    {/* Pulse Effect on Hover */}
-                    <div className="absolute inset-0 bg-emerald-400/0 group-hover:bg-emerald-400/10 group-hover:animate-pulse rounded-3xl"></div>
-
-                    <div className="relative text-center z-10">
+                    <div className="relative flex items-center justify-center gap-2 z-10">
                       {/* Icon */}
-                      <div className="flex justify-center mb-2">
-                        <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/25 transition-all duration-300">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                          </svg>
-                        </div>
-                      </div>
-
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                      </svg>
                       {/* Text */}
-                      <div className="text-xl mb-1 font-bold tracking-tight">BUY / LONG</div>
-                      <div className="text-sm opacity-90 font-medium">Enter Bullish Position</div>
-                      <div className="text-xs opacity-75 mt-2">Profit when price rises ↗
-                      </div>
+                      <span className="text-sm font-black tracking-wide">BUY LONG</span>
                     </div>
                   </button>
 
-                  {/* SELL Button - Enhanced Premium Design */}
+                  {/* SELL Button - Compact Elite Design */}
                   <button
                     onClick={() => executeTrade('SELL')}
-                    className="group relative bg-gradient-to-br from-rose-500 via-red-500 to-pink-600 hover:from-rose-400 hover:via-red-400 hover:to-pink-500 p-5 rounded-2xl font-bold text-white transition-all duration-500 shadow-xl hover:shadow-rose-500/30 hover:scale-[1.02] transform overflow-hidden border border-rose-400/20 hover:border-rose-300/40"
+                    className="group relative bg-gradient-to-br from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 px-6 py-3 rounded-xl font-bold text-white transition-all duration-300 shadow-lg hover:shadow-rose-500/40 hover:-translate-y-0.5 transform overflow-hidden border border-rose-400/30"
                   >
-                    {/* Animated Background Shine */}
+                    {/* Shimmer effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
 
-
-
-                    <div className="relative text-center z-10">
+                    <div className="relative flex items-center justify-center gap-2 z-10">
                       {/* Icon */}
-                      <div className="flex justify-center mb-2">
-                        <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/25 transition-all duration-300">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
-                          </svg>
-                        </div>
-                      </div>
-
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
+                      </svg>
                       {/* Text */}
-                      <div className="text-xl mb-1 font-bold tracking-tight">SELL / SHORT</div>
-                      <div className="text-sm opacity-90 font-medium">Enter Bearish Position</div>
-                      <div className="text-xs opacity-75 mt-2">Profit when price falls ↘
-                      </div>
+                      <span className="text-sm font-black tracking-wide">SELL SHORT</span>
                     </div>
                   </button>
                 </>

@@ -43,7 +43,7 @@ const Register = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { register } = useAuth();
-  
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -59,7 +59,7 @@ const Register = () => {
     initParticlesEngine(async (engine) => {
       await loadSlim(engine);
     }).then(() => setParticlesInit(true));
-    
+
     document.documentElement.classList.add('dark');
     document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   }, [i18n.language]);
@@ -96,7 +96,7 @@ const Register = () => {
 
   return (
     <div className="relative min-h-screen bg-slate-950 flex items-center justify-center p-4 overflow-hidden">
-      
+
       {/* 3D Background */}
       <div className="absolute inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 5] }}>
@@ -151,67 +151,97 @@ const Register = () => {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="md:col-span-2">
               <label className="block text-xs font-black text-slate-500 uppercase mb-2 ml-1">Codename (Username)</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-                className="w-full px-5 py-3.5 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-white transition-all"
-                placeholder="Choose username"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-5 py-3.5 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-white transition-all hover:bg-slate-800/70"
+                  placeholder="Choose username"
+                />
+              </div>
             </div>
 
             <div className="md:col-span-2">
               <label className="block text-xs font-black text-slate-500 uppercase mb-2 ml-1">Communication Channel (Email)</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full px-5 py-3.5 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-white transition-all"
-                placeholder="your@email.com"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-5 py-3.5 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-white transition-all hover:bg-slate-800/70"
+                  placeholder="your@email.com"
+                />
+              </div>
             </div>
 
             <div>
               <label className="block text-xs font-black text-slate-500 uppercase mb-2 ml-1">Secure Key</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                minLength={6}
-                className="w-full px-5 py-3.5 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-white transition-all"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  minLength={6}
+                  className="w-full pl-12 pr-5 py-3.5 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-white transition-all hover:bg-slate-800/70"
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
 
             <div>
               <label className="block text-xs font-black text-slate-500 uppercase mb-2 ml-1">Verify Key</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className="w-full px-5 py-3.5 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-white transition-all"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-5 py-3.5 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-white transition-all hover:bg-slate-800/70"
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className={`md:col-span-2 py-4 rounded-2xl font-black text-white uppercase tracking-widest transition-all duration-300 mt-2 ${
-                loading
+              className={`relative md:col-span-2 py-4 rounded-2xl font-black text-white uppercase tracking-widest transition-all duration-300 mt-2 overflow-hidden group ${loading
                   ? 'bg-slate-700 cursor-wait'
-                  : 'bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-600/20 active:scale-95'
-              }`}
+                  : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-xl shadow-blue-600/20 hover:shadow-blue-500/40 active:scale-95'
+                }`}
             >
-              {loading ? 'Initializing Profile...' : 'Authorize Registration'}
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
+              <span className="relative z-10">
+                {loading ? 'Initializing Profile...' : 'Authorize Registration'}
+              </span>
             </button>
           </form>
 

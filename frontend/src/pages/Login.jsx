@@ -43,7 +43,7 @@ const Login = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { login } = useAuth();
-  
+
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -54,7 +54,7 @@ const Login = () => {
     initParticlesEngine(async (engine) => {
       await loadSlim(engine);
     }).then(() => setParticlesInit(true));
-    
+
     // Force Dark Mode for this page
     document.documentElement.classList.add('dark');
   }, []);
@@ -79,7 +79,7 @@ const Login = () => {
 
   return (
     <div className="relative min-h-screen bg-slate-950 flex items-center justify-center p-4 overflow-hidden">
-      
+
       {/* 1. 3D Background Layer */}
       <div className="absolute inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 5] }}>
@@ -111,7 +111,7 @@ const Login = () => {
 
       {/* 3. Login Card (Glassmorphism) */}
       <div className="relative z-10 w-full max-w-md">
-        
+
         {/* Logo Section */}
         <div className="text-center mb-10">
           <div className="flex flex-col items-center justify-center space-y-4">
@@ -138,45 +138,61 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="group">
               <label className="block text-xs font-black text-slate-500 uppercase mb-2 ml-1">Identity</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-                className="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-500 transition-all outline-none"
-                placeholder="Username or Email"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-5 py-4 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-500 transition-all outline-none hover:bg-slate-800/70"
+                  placeholder="Username or Email"
+                />
+              </div>
             </div>
 
             <div className="group">
               <label className="block text-xs font-black text-slate-500 uppercase mb-2 ml-1">Access Key</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-500 transition-all outline-none"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-5 py-4 bg-slate-800/50 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-500 transition-all outline-none hover:bg-slate-800/70"
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-4 rounded-2xl font-black text-white uppercase tracking-widest transition-all duration-300 ${
-                loading
+              className={`relative w-full py-4 rounded-2xl font-black text-white uppercase tracking-widest transition-all duration-300 overflow-hidden group ${loading
                   ? 'bg-slate-700 cursor-wait'
-                  : 'bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-600/20 active:scale-95'
-              }`}
+                  : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-xl shadow-blue-600/20 hover:shadow-blue-500/40 active:scale-95'
+                }`}
             >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Verifying...
-                </span>
-              ) : 'Establish Connection'}
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
+              <span className="relative z-10">
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Verifying...
+                  </span>
+                ) : 'Establish Connection'}
+              </span>
             </button>
           </form>
 
