@@ -14,6 +14,7 @@ import SuperAdminPanel from './pages/SuperAdminPanel';
 import Challenges from './pages/Challenges';
 import ChallengeSelection from './pages/ChallengeSelection';
 import TradeHistory from './pages/TradeHistory';
+import TradingAcademy from './pages/TradingAcademy';
 import axios from 'axios';
 
 // 👇 Use environment variable for backend URL
@@ -40,7 +41,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            
+
             {/* Protected Routes */}
             <Route
               path="/dashboard"
@@ -106,7 +107,15 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            
+            <Route
+              path="/academy"
+              element={
+                <ProtectedRoute>
+                  <TradingAcademy />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Catch-all redirect */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
