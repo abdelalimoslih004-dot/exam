@@ -6,13 +6,9 @@ psycopg2-binary
 python-dotenv
 gunicorn
 werkzeug
-Flask-SocketIO
-simple-websocket
 yfinance
 pandas
 numpy
 requests
 openai
 APScheduler
-eventlet
-gevent

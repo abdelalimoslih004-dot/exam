@@ -1,10 +1,9 @@
 """
 Trading Challenge Platform - Main Backend Application
-Flask + JWT Authentication + CORS + SocketIO
+Flask + JWT Authentication + CORS
 """
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
 import secrets
@@ -31,7 +30,6 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 # Initialize extensions
 CORS(app, resources={r"/*": {"origins": "*"}})
 jwt = JWTManager(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
 
 # JWT error handlers
 @jwt.invalid_token_loader
@@ -1200,64 +1198,6 @@ def superadmin_get_user_challenges(user_id):
         return jsonify({'error': str(e)}), 500
 
 
-# ============================================================
-# SOCKETIO EVENTS FOR REAL-TIME CHAT
-# ============================================================
-@socketio.on('connect')
-def handle_connect():
-    """Client connected to WebSocket"""
-    print(f'Client connected: {request.sid}')
-    emit('message', {'type': 'system', 'content': 'Connected to PropSense chat'})
-
-
-@socketio.on('disconnect')
-def handle_disconnect():
-    """Client disconnected from WebSocket"""
-    print(f'Client disconnected: {request.sid}')
-
-
-@socketio.on('join_chat')
-def handle_join_chat(data):
-    """User joins the global trading chat room"""
-    username = data.get('username', 'Anonymous')
-    join_room('trading_chat')
-    print(f'{username} joined trading chat')
-    emit('message', {
-        'type': 'system',
-        'content': f'{username} joined the chat',
-        'timestamp': datetime.utcnow().isoformat()
-    }, room='trading_chat')
-
-
-@socketio.on('leave_chat')
-def handle_leave_chat(data):
-    """User leaves the trading chat room"""
-    username = data.get('username', 'Anonymous')
-    leave_room('trading_chat')
-    print(f'{username} left trading chat')
-    emit('message', {
-        'type': 'system',
-        'content': f'{username} left the chat',
-        'timestamp': datetime.utcnow().isoformat()
-    }, room='trading_chat')
-
-
-@socketio.on('send_message')
-def handle_send_message(data):
-    """Broadcast message to all users in trading chat"""
-    username = data.get('username', 'Anonymous')
-    message = data.get('message', '')
-    
-    if message.strip():
-        print(f'Message from {username}: {message}')
-        emit('message', {
-            'type': 'user',
-            'username': username,
-            'content': message,
-            'timestamp': datetime.utcnow().isoformat()
-        }, room='trading_chat')
-
-
 # Database initialization
 with app.app_context():
     db.create_all()
@@ -1291,23 +1231,11 @@ with app.app_context():
 
 
 if __name__ == '__main__':
-    # Start live feed monitoring in background (crypto prices every 60 seconds)
-    live_feed.start_monitoring()
-    
-    # Start BVC monitoring in background (stock prices every 2 minutes)
-    bvc_scraper.start_monitoring(interval=120)  # 120 secondes = 2 minutes
-    
-    # Start Challenge Killer in background (check rules every 30 seconds)
-    killer.start_monitoring(interval_seconds=30)
-    
-    print("[STARTUP] Server starting with market data monitoring...")
-    print("[INFO] Crypto: update every 60 seconds")
-    print("[INFO] BVC Stocks: update every 2 minutes")
-    print("[INFO] Challenge Killer: check rules every 30 seconds")
-    print("[INFO] Real-time chat enabled via SocketIO")
-    
-    socketio.run(
-        app,
+    # Local development server
+    # In production, Gunicorn will be used instead
+    print("[STARTUP] Starting development server...")
+    print("[INFO] For production, use: gunicorn -w 4 --bind 0.0.0.0:$PORT app:app")
+    app.run(
         host='0.0.0.0',
         port=int(os.getenv('PORT', 5000)),
         debug=False
