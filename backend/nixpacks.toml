@@ -10,4 +10,4 @@ cmds = [
 ]
 
 [start]
-cmd = "/opt/venv/bin/gunicorn -w 4 --bind 0.0.0.0:$PORT app:app"
+cmd = "LD_LIBRARY_PATH=/nix/store/$(ls /nix/store | grep -m1 'gcc.*lib$')/lib:$LD_LIBRARY_PATH /opt/venv/bin/gunicorn -w 4 --bind 0.0.0.0:$PORT app:app"
