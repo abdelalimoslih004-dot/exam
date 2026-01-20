@@ -182,27 +182,27 @@ const Checkout = () => {
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700 h-fit">
             <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
 
-            <div className={`bg-gradient-to-r ${selectedPlan.gradient} p-6 rounded-xl mb-6`}>
+            <div className={`bg-gradient-to-r ${selectedPlan.color || 'from-blue-900/40 to-slate-900'} p-6 rounded-xl mb-6 border ${selectedPlan.border || 'border-blue-500/50'}`}>
               <h3 className="text-2xl font-bold mb-2">{selectedPlan.name}</h3>
-              <div className="text-4xl font-bold mb-4">{selectedPlan.price} {selectedPlan.currency}</div>
+              <div className="text-4xl font-bold mb-4">{selectedPlan.price} DH</div>
             </div>
 
             <div className="space-y-3 mb-6">
               <div className="flex justify-between py-2 border-b border-gray-700">
                 <span className="text-gray-400">Initial Capital</span>
-                <span className="font-semibold">{selectedPlan.features.capital}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-gray-700">
-                <span className="text-gray-400">Profit Share</span>
-                <span className="font-semibold text-green-400">{selectedPlan.features.profit}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-gray-700">
-                <span className="text-gray-400">Max Daily Loss</span>
-                <span className="font-semibold text-red-400">{selectedPlan.features.dailyLoss}</span>
+                <span className="font-semibold">{selectedPlan.capital}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-700">
                 <span className="text-gray-400">Profit Target</span>
-                <span className="font-semibold text-blue-400">{selectedPlan.features.target}</span>
+                <span className="font-semibold text-green-400">{selectedPlan.monthlyTarget}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-700">
+                <span className="text-gray-400">Max Drawdown</span>
+                <span className="font-semibold text-orange-400">{selectedPlan.maxDrawdown}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-700">
+                <span className="text-gray-400">Max Daily Loss</span>
+                <span className="font-semibold text-red-400">{selectedPlan.dailyLoss}</span>
               </div>
             </div>
 
@@ -239,8 +239,8 @@ const Checkout = () => {
                     <button
                       onClick={() => setPaymentMethod('paypal')}
                       className={`w-full p-4 rounded-xl border-2 transition-all ${paymentMethod === 'paypal'
-                          ? 'border-blue-500 bg-blue-900/30'
-                          : 'border-gray-700 hover:border-gray-600'
+                        ? 'border-blue-500 bg-blue-900/30'
+                        : 'border-gray-700 hover:border-gray-600'
                         }`}
                     >
                       <div className="flex items-center gap-3">
@@ -259,8 +259,8 @@ const Checkout = () => {
                     <button
                       onClick={() => setPaymentMethod('cmi')}
                       className={`w-full p-4 rounded-xl border-2 transition-all ${paymentMethod === 'cmi'
-                          ? 'border-green-500 bg-green-900/30'
-                          : 'border-gray-700 hover:border-gray-600'
+                        ? 'border-green-500 bg-green-900/30'
+                        : 'border-gray-700 hover:border-gray-600'
                         }`}
                     >
                       <div className="flex items-center gap-3">
@@ -279,8 +279,8 @@ const Checkout = () => {
                     <button
                       onClick={() => setPaymentMethod('crypto')}
                       className={`w-full p-4 rounded-xl border-2 transition-all ${paymentMethod === 'crypto'
-                          ? 'border-purple-500 bg-purple-900/30'
-                          : 'border-gray-700 hover:border-gray-600'
+                        ? 'border-purple-500 bg-purple-900/30'
+                        : 'border-gray-700 hover:border-gray-600'
                         }`}
                     >
                       <div className="flex items-center gap-3">
