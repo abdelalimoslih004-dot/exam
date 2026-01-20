@@ -843,8 +843,7 @@ const Dashboard = () => {
                         // Show failure modal
                         alert(`❌ CHALLENGE FAILED!\n\nYou exceeded the maximum daily loss limit!\n\nMax Daily Loss: ${maxDailyLossPercent}% (${formatCurrency(maxDailyLossAmount)} DH)\nYour Loss: ${formatCurrency(simulatedLoss)} DH\n\nYour balance has been reset to 0 DH.\nYou cannot trade until you purchase a new challenge.\n\nCheck /challenges to see your failed status.`);
 
-                        // Refresh page to show updated state
-                        window.location.reload();
+                        // No need to reload - state already updated
                       } catch (error) {
                         console.error('Failed to simulate failure:', error);
                         alert('Error simulating failure. Make sure you have admin permissions.');
