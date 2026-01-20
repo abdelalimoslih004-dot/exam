@@ -815,16 +815,15 @@ const Dashboard = () => {
                       }
 
                       try {
-                        // Simulate a big losing trade that exceeds daily loss limit
+                        // Calculate the loss details for the message
                         const initialBalance = activeChallenge.initial_balance || balance;
                         const maxDailyLossPercent = activeChallenge.max_daily_loss || 5;
                         const maxDailyLossAmount = initialBalance * (maxDailyLossPercent / 100);
-
-                        // Create a loss that's 150% of max daily loss
+                        // Create a loss that's 150% of max daily loss for display purposes
                         const simulatedLoss = maxDailyLossAmount * 1.5;
-                        const newBalance = balance - simulatedLoss;
 
-                        setBalance(newBalance);
+                        // Set balance to 0 to prevent further trading
+                        setBalance(0);
 
                         // Call API to actually fail the challenge
                         const token = localStorage.getItem('token');
@@ -842,7 +841,7 @@ const Dashboard = () => {
                         setActiveChallenge(null);
 
                         // Show failure modal
-                        alert(`❌ CHALLENGE FAILED!\n\nYou exceeded the maximum daily loss limit!\n\nMax Daily Loss: ${maxDailyLossPercent}% (${formatCurrency(maxDailyLossAmount)} DH)\nYour Loss: ${formatCurrency(simulatedLoss)} DH\n\nYour challenge has been terminated and marked as FAILED.\n\nCheck /challenges to see your failed status.`);
+                        alert(`❌ CHALLENGE FAILED!\n\nYou exceeded the maximum daily loss limit!\n\nMax Daily Loss: ${maxDailyLossPercent}% (${formatCurrency(maxDailyLossAmount)} DH)\nYour Loss: ${formatCurrency(simulatedLoss)} DH\n\nYour balance has been reset to 0 DH.\nYou cannot trade until you purchase a new challenge.\n\nCheck /challenges to see your failed status.`);
 
                         // Refresh page to show updated state
                         window.location.reload();
