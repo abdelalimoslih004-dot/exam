@@ -759,6 +759,28 @@ const Dashboard = () => {
                   >
                     View Details
                   </button>
+
+                  {/* Demo Button - Simulate Failure */}
+                  <button
+                    onClick={() => {
+                      // Simulate a big losing trade that exceeds daily loss limit
+                      const initialBalance = activeChallenge.initial_balance || balance;
+                      const maxDailyLossPercent = activeChallenge.max_daily_loss || 5;
+                      const maxDailyLossAmount = initialBalance * (maxDailyLossPercent / 100);
+
+                      // Create a loss that's 150% of max daily loss
+                      const simulatedLoss = maxDailyLossAmount * 1.5;
+                      const newBalance = balance - simulatedLoss;
+
+                      setBalance(newBalance);
+
+                      // Show failure modal
+                      alert(`❌ CHALLENGE FAILED!\n\nYou exceeded the maximum daily loss limit!\n\nMax Daily Loss: ${maxDailyLossPercent}% (${formatCurrency(maxDailyLossAmount)} DH)\nYour Loss: ${formatCurrency(simulatedLoss)} DH\n\nYour challenge has been terminated.\n\nThis is a DEMO simulation for educational purposes.`);
+                    }}
+                    className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-lg py-2.5 text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-red-500/20 mt-2"
+                  >
+                    🔴 Simulate Failure (Demo)
+                  </button>
                 </div>
               </div>
             )}
