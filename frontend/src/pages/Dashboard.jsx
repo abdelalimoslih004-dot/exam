@@ -809,20 +809,47 @@ const Dashboard = () => {
 
                   {/* Demo Button - Simulate Failure */}
                   <button
-                    onClick={() => {
-                      // Simulate a big losing trade that exceeds daily loss limit
-                      const initialBalance = activeChallenge.initial_balance || balance;
-                      const maxDailyLossPercent = activeChallenge.max_daily_loss || 5;
-                      const maxDailyLossAmount = initialBalance * (maxDailyLossPercent / 100);
+                    onClick={async () => {
+                      if (!window.confirm('⚠️ This will FAIL your challenge permanently for demo purposes. Continue?')) {
+                        return;
+                      }
 
-                      // Create a loss that's 150% of max daily loss
-                      const simulatedLoss = maxDailyLossAmount * 1.5;
-                      const newBalance = balance - simulatedLoss;
+                      try {
+                        // Simulate a big losing trade that exceeds daily loss limit
+                        const initialBalance = activeChallenge.initial_balance || balance;
+                        const maxDailyLossPercent = activeChallenge.max_daily_loss || 5;
+                        const maxDailyLossAmount = initialBalance * (maxDailyLossPercent / 100);
 
-                      setBalance(newBalance);
+                        // Create a loss that's 150% of max daily loss
+                        const simulatedLoss = maxDailyLossAmount * 1.5;
+                        const newBalance = balance - simulatedLoss;
 
-                      // Show failure modal
-                      alert(`❌ CHALLENGE FAILED!\n\nYou exceeded the maximum daily loss limit!\n\nMax Daily Loss: ${maxDailyLossPercent}% (${formatCurrency(maxDailyLossAmount)} DH)\nYour Loss: ${formatCurrency(simulatedLoss)} DH\n\nYour challenge has been terminated.\n\nThis is a DEMO simulation for educational purposes.`);
+                        setBalance(newBalance);
+
+                        // Call API to actually fail the challenge
+                        const token = localStorage.getItem('token');
+                        await axios.post(
+                          `/api/admin/challenge/${activeChallenge.id}/force-status`,
+                          { status: 'FAILED' },
+                          {
+                            headers: {
+                              Authorization: `Bearer ${token}`
+                            }
+                          }
+                        );
+
+                        // Clear active challenge
+                        setActiveChallenge(null);
+
+                        // Show failure modal
+                        alert(`❌ CHALLENGE FAILED!\n\nYou exceeded the maximum daily loss limit!\n\nMax Daily Loss: ${maxDailyLossPercent}% (${formatCurrency(maxDailyLossAmount)} DH)\nYour Loss: ${formatCurrency(simulatedLoss)} DH\n\nYour challenge has been terminated and marked as FAILED.\n\nCheck /challenges to see your failed status.`);
+
+                        // Refresh page to show updated state
+                        window.location.reload();
+                      } catch (error) {
+                        console.error('Failed to simulate failure:', error);
+                        alert('Error simulating failure. Make sure you have admin permissions.');
+                      }
                     }}
                     className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-lg py-2.5 text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-red-500/20 mt-2"
                   >
