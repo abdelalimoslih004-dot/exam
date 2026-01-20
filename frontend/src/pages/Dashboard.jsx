@@ -6,7 +6,7 @@ import Chat from '../components/Chat';
 import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { user, logout, token, isAuthenticated } = useAuth();
   const chartContainerRef = useRef();
