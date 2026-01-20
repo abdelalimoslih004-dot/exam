@@ -1203,31 +1203,43 @@ with app.app_context():
     db.create_all()
     print("[OK] Database tables created successfully")
     
-    # Create default superadmin if doesn't exist
-    superadmin = User.query.filter_by(username='superadmin').first()
-    if not superadmin:
-        superadmin = User(
-            username='superadmin',
-            email='superadmin@propsense.com',
-            role='superadmin'
-        )
-        superadmin.set_password('superadmin123')
-        db.session.add(superadmin)
-        db.session.commit()
-        print("[OK] Default superadmin user created (username: superadmin, password: superadmin123)")
+    try:
+        # Create default superadmin if doesn't exist
+        superadmin = User.query.filter_by(username='superadmin').first()
+        if not superadmin:
+            superadmin = User(
+                username='superadmin',
+                email='superadmin@propsense.com',
+                role='superadmin'
+            )
+            superadmin.set_password('superadmin123')
+            db.session.add(superadmin)
+            db.session.commit()
+            print("[OK] Default superadmin user created (username: superadmin, password: superadmin123)")
+        else:
+            print("[INFO] Superadmin user already exists")
+    except Exception as e:
+        db.session.rollback()
+        print(f"[INFO] Superadmin creation skipped: {e}")
     
-    # Create default admin if doesn't exist
-    admin = User.query.filter_by(username='admin').first()
-    if not admin:
-        admin = User(
-            username='admin',
-            email='admin@propsense.com',
-            role='admin'
-        )
-        admin.set_password('admin123')
-        db.session.add(admin)
-        db.session.commit()
-        print("[OK] Default admin user created (username: admin, password: admin123)")
+    try:
+        # Create default admin if doesn't exist
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin = User(
+                username='admin',
+                email='admin@propsense.com',
+                role='admin'
+            )
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+            print("[OK] Default admin user created (username: admin, password: admin123)")
+        else:
+            print("[INFO] Admin user already exists")
+    except Exception as e:
+        db.session.rollback()
+        print(f"[INFO] Admin creation skipped: {e}")
 
 
 if __name__ == '__main__':
